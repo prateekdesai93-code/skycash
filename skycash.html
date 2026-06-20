@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#3b82f6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>SkyCash — money weather</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23ffe08a'/%3E%3Cstop offset='.55' stop-color='%238fd0ff'/%3E%3Cstop offset='1' stop-color='%235aa9ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='24' fill='url(%23g)'/%3E%3Ccircle cx='66' cy='34' r='15' fill='%23fff7d6'/%3E%3Cellipse cx='44' cy='62' rx='26' ry='15' fill='%23ffffff'/%3E%3Cellipse cx='62' cy='66' rx='18' ry='12' fill='%23ffffff'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23ffe08a'/%3E%3Cstop offset='.55' stop-color='%238fd0ff'/%3E%3Cstop offset='1' stop-color='%235aa9ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='24' fill='url(%23g)'/%3E%3Ccircle cx='66' cy='34' r='15' fill='%23fff7d6'/%3E%3Cellipse cx='44' cy='62' rx='26' ry='15' fill='%23ffffff'/%3E%3Cellipse cx='62' cy='66' rx='18' ry='12' fill='%23ffffff'/%3E%3C/svg%3E">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22SkyCash%20%E2%80%94%20money%20weather%22%2C%22short_name%22%3A%22SkyCash%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23eef2f8%22%2C%22theme_color%22%3A%22%233b82f6%22%2C%22start_url%22%3A%22.%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage/svg%2Bxml%2C%253Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20100%20100%27%253E%253Cdefs%253E%253ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%253E%253Cstop%20offset%3D%270%27%20stop-color%3D%27%2523ffe08a%27/%253E%253Cstop%20offset%3D%27.55%27%20stop-color%3D%27%25238fd0ff%27/%253E%253Cstop%20offset%3D%271%27%20stop-color%3D%27%25235aa9ff%27/%253E%253C/linearGradient%253E%253C/defs%253E%253Crect%20width%3D%27100%27%20height%3D%27100%27%20rx%3D%2724%27%20fill%3D%27url%28%2523g%29%27/%253E%253Ccircle%20cx%3D%2766%27%20cy%3D%2734%27%20r%3D%2715%27%20fill%3D%27%2523fff7d6%27/%253E%253Cellipse%20cx%3D%2744%27%20cy%3D%2762%27%20rx%3D%2726%27%20ry%3D%2715%27%20fill%3D%27%2523ffffff%27/%253E%253Cellipse%20cx%3D%2762%27%20cy%3D%2766%27%20rx%3D%2718%27%20ry%3D%2712%27%20fill%3D%27%2523ffffff%27/%253E%253C/svg%253E%22%2C%22sizes%22%3A%22any%22%2C%22type%22%3A%22image/svg%2Bxml%22%7D%5D%7D">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eef2f8; --surface:#ffffff; --surface-2:#f4f6fb; --line:#e7ebf2;
+  --ink:#101729; --ink-2:#5a6478; --ink-3:#9aa3b5;
+  --primary:#3b82f6; --primary-ink:#1d4ed8;
+  --good:#10b981; --good-ink:#059669;
+  --warn:#f59e0b; --warn-ink:#d97706;
+  --bad:#f43f5e; --bad-ink:#e11d48;
+  --spent:#7c3aed;
+  --radius:22px; --radius-sm:14px; --radius-lg:30px;
+  --shadow:0 8px 24px -12px rgba(16,23,41,.18), 0 2px 6px -3px rgba(16,23,41,.10);
+  --shadow-soft:0 2px 10px -4px rgba(16,23,41,.12);
+  --nav-h:78px;
+  --sky-1:#7fb8f5; --sky-2:#cfe6ff; --sky-ink:#0d2747;
+  --font:"Nunito",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;
+}
+[data-theme="dark"]{
+  --bg:#0b1020; --surface:#151c2e; --surface-2:#1b2336; --line:#262f45;
+  --ink:#eef2fb; --ink-2:#a3adc4; --ink-3:#6b768f;
+  --primary:#5b9bff; --primary-ink:#8fbaff;
+  --good:#34d399; --good-ink:#6ee7b7;
+  --warn:#fbbf24; --warn-ink:#fcd34d;
+  --bad:#fb7185; --bad-ink:#fda4af;
+  --shadow:0 12px 30px -14px rgba(0,0,0,.6), 0 2px 8px -4px rgba(0,0,0,.5);
+  --shadow-soft:0 2px 12px -6px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--font); background:var(--bg); color:var(--ink);
+  -webkit-font-smoothing:antialiased; overscroll-behavior-y:none;
+  font-weight:600; line-height:1.4;
+}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select{font-family:inherit}
+.tnum{font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+
+/* ---------- APP SHELL ---------- */
+#app{max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;position:relative;padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom))}
+.screen{display:none;animation:fade .28s ease}
+.screen.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ---------- TOP BAR ---------- */
+.topbar{position:sticky;top:0;z-index:30;background:var(--bg);
+  padding:calc(env(safe-area-inset-top) + 10px) 16px 8px;display:flex;align-items:center;gap:10px}
+.icon-btn{width:42px;height:42px;border-radius:50%;background:var(--surface);box-shadow:var(--shadow-soft);
+  display:grid;place-items:center;font-size:18px;color:var(--ink);transition:transform .15s}
+.icon-btn:active{transform:scale(.92)}
+.balance-pill{flex:1;text-align:center}
+.balance-pill .amt{font-size:21px;font-weight:900;letter-spacing:-.02em}
+.balance-pill .sub{font-size:11px;color:var(--ink-3);font-weight:700;margin-top:-2px}
+.profile-chip{display:flex;align-items:center;gap:6px;background:var(--surface);box-shadow:var(--shadow-soft);
+  padding:6px 12px 6px 8px;border-radius:30px;font-size:13px;font-weight:800}
+.profile-chip .pe{font-size:17px}
+.profile-chip.biz{box-shadow:0 0 0 2px var(--warn) inset, var(--shadow-soft)}
+
+/* ---------- SKY HERO ---------- */
+.sky{position:relative;margin:6px 14px 0;border-radius:var(--radius-lg);overflow:hidden;
+  min-height:230px;box-shadow:var(--shadow);isolation:isolate;color:#fff}
+.sky-bg{position:absolute;inset:0;z-index:-2;transition:background 1.2s ease}
+.sky-shine{background:linear-gradient(160deg,#ffd86b 0%,#ffb347 22%,#5ec6ff 70%,#3b9bff 100%)}
+.sky-clear{background:linear-gradient(165deg,#ffe08a 0%,#8fd0ff 55%,#5aa9ff 100%)}
+.sky-cloudy{background:linear-gradient(165deg,#aab9cf 0%,#8a9bb6 55%,#6f82a0 100%)}
+.sky-storm{background:linear-gradient(165deg,#3b4763 0%,#2a3450 55%,#1c2238 100%)}
+.sky-layer{position:absolute;inset:0;z-index:-1;pointer-events:none}
+.sun{position:absolute;top:24px;right:30px;width:64px;height:64px;border-radius:50%;
+  background:radial-gradient(circle,#fff7d6 0%,#ffe27a 55%,#ffd24d 100%);
+  box-shadow:0 0 50px 14px rgba(255,224,120,.7);animation:bob 6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(7px)}}
+.cloud{position:absolute;background:rgba(255,255,255,.9);border-radius:50px;filter:blur(.3px);opacity:.92}
+.cloud::before,.cloud::after{content:"";position:absolute;background:inherit;border-radius:50%}
+.cloud.c1{width:90px;height:26px;top:46px;left:-90px;animation:drift 26s linear infinite}
+.cloud.c1::before{width:38px;height:38px;top:-16px;left:14px}
+.cloud.c1::after{width:30px;height:30px;top:-10px;left:48px}
+.cloud.c2{width:120px;height:30px;top:96px;left:-130px;opacity:.7;animation:drift 38s linear infinite 4s}
+.cloud.c2::before{width:46px;height:46px;top:-20px;left:20px}
+.cloud.c2::after{width:34px;height:34px;top:-12px;left:62px}
+@keyframes drift{to{transform:translateX(640px)}}
+.rain{position:absolute;inset:0;overflow:hidden;opacity:0;transition:opacity .8s}
+.rain i{position:absolute;top:-12%;width:2px;height:16px;background:linear-gradient(transparent,rgba(255,255,255,.65));
+  border-radius:2px;animation:fall linear infinite}
+@keyframes fall{to{transform:translateY(280px)}}
+.spark{position:absolute;font-size:14px;opacity:0;animation:tw 2.4s ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:0;transform:scale(.6)}50%{opacity:1;transform:scale(1)}}
+.sky.is-storm .rain{opacity:1}
+.sky-content{position:relative;padding:20px 22px 22px;height:100%;display:flex;flex-direction:column;
+  justify-content:flex-end;min-height:230px;text-shadow:0 1px 8px rgba(10,20,40,.25)}
+.sky-eyebrow{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;opacity:.9}
+.sky-state{font-size:30px;font-weight:900;letter-spacing:-.02em;margin:2px 0 6px;display:flex;align-items:center;gap:8px}
+.sky-line{font-size:15px;font-weight:700;line-height:1.35;max-width:90%}
+.sky-real{margin-top:12px;background:rgba(255,255,255,.22);backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);border-radius:14px;padding:9px 12px;font-size:13px;font-weight:700;
+  display:flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.25)}
+.sky.is-storm .sky-real,.sky.is-cloudy .sky-real{background:rgba(255,255,255,.16)}
+
+/* ---------- METRIC ROW ---------- */
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px 14px 4px}
+.metric{background:var(--surface);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow-soft)}
+.metric .label{font-size:12px;font-weight:800;color:var(--ink-2);display:flex;align-items:center;gap:5px}
+.metric .val{font-size:26px;font-weight:900;letter-spacing:-.02em;margin-top:3px}
+.metric .hint{font-size:11px;font-weight:700;color:var(--ink-3);margin-top:1px}
+.val.good{color:var(--good-ink)} .val.bad{color:var(--bad-ink)} .val.warn{color:var(--warn-ink)}
+
+/* ---------- SECTION ---------- */
+.section{padding:18px 16px 0}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.section-head h2{font-size:19px;font-weight:900;letter-spacing:-.02em;margin:0}
+.section-head .act{font-size:13px;font-weight:800;color:var(--primary-ink)}
+
+/* quick chips */
+.chips{display:flex;gap:10px;overflow-x:auto;padding:2px 0 4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;background:var(--surface);box-shadow:var(--shadow-soft);border-radius:18px;
+  padding:12px 10px;min-width:62px;text-align:center;transition:transform .12s}
+.chip:active{transform:scale(.93)}
+.chip .e{font-size:24px;display:block}
+.chip .t{font-size:10px;font-weight:800;color:var(--ink-2);margin-top:3px;white-space:nowrap}
+.chip.add{background:linear-gradient(135deg,var(--primary),#60a5fa);color:#fff}
+.chip.add .t{color:#fff}
+
+/* upcoming list */
+.row{display:flex;align-items:center;gap:12px;background:var(--surface);border-radius:var(--radius);
+  padding:13px 15px;box-shadow:var(--shadow-soft);margin-bottom:10px}
+.row .ic{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:21px;background:var(--surface-2);flex:0 0 auto}
+.row .mid{flex:1;min-width:0}
+.row .ttl{font-size:15px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .meta{font-size:12px;font-weight:700;color:var(--ink-3);margin-top:1px}
+.row .amt{font-size:16px;font-weight:900;letter-spacing:-.01em}
+.amt.in{color:var(--good-ink)} .amt.out{color:var(--ink)}
+.row.cleared{opacity:.55}.row.cleared .ttl{text-decoration:line-through}
+.tag{font-size:10px;font-weight:800;padding:2px 7px;border-radius:8px;background:var(--surface-2);color:var(--ink-2)}
+.tag.rec{background:#e7efff;color:var(--primary-ink)}
+[data-theme="dark"] .tag.rec{background:#1e2c4a}
+
+/* ---------- CALENDAR ---------- */
+.cal-head{display:grid;grid-template-columns:repeat(7,1fr);padding:0 8px;margin-top:6px}
+.cal-head span{text-align:center;font-size:11px;font-weight:800;color:var(--ink-3)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;padding:6px 8px 0}
+.day{background:var(--surface);border-radius:12px;min-height:88px;padding:5px 4px;box-shadow:var(--shadow-soft);
+  display:flex;flex-direction:column;gap:3px;overflow:hidden}
+.day.dim{opacity:.45}
+.day .dn{font-size:13px;font-weight:900;text-align:center}
+.day.today .dn{background:var(--primary);color:#fff;border-radius:8px;width:24px;height:24px;line-height:24px;margin:0 auto;text-align:center}
+.day .bal{font-size:9px;font-weight:800;text-align:center;color:var(--ink-3);background:var(--surface-2);border-radius:6px;padding:1px 0}
+.day .bal.neg{color:var(--bad-ink);background:rgba(244,63,94,.12)}
+.evt{font-size:8.5px;font-weight:800;border-radius:6px;padding:2px 3px;display:flex;align-items:center;gap:2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.evt.out{background:rgba(244,63,94,.10);color:var(--bad-ink)}
+.evt.in{background:rgba(16,185,129,.12);color:var(--good-ink)}
+.evt .em{font-size:10px}
+
+/* ---------- RECURRING ---------- */
+.rec-card{background:var(--surface);border-radius:var(--radius);padding:14px 15px;box-shadow:var(--shadow-soft);
+  margin-bottom:11px;display:flex;align-items:center;gap:12px}
+.rec-card.off{opacity:.5}
+.switch{width:46px;height:28px;border-radius:20px;background:var(--line);position:relative;flex:0 0 auto;transition:background .2s}
+.switch.on{background:var(--good)}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;
+  transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.switch.on::after{transform:translateX(18px)}
+
+/* ---------- BOTTOM NAV ---------- */
+.nav{position:fixed;bottom:calc(env(safe-area-inset-bottom) + 12px);left:50%;transform:translateX(-50%);
+  z-index:40;display:flex;align-items:center;gap:6px;background:var(--surface);
+  box-shadow:var(--shadow);border-radius:40px;padding:8px 10px;width:min(440px,calc(100% - 28px));justify-content:space-around}
+.nav button{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;color:var(--ink-3);transition:.15s}
+.nav button svg{width:24px;height:24px;stroke-width:2.2}
+.nav button.on{color:var(--primary)}
+.nav .fab{width:58px;height:58px;background:linear-gradient(135deg,var(--primary),#2563eb);color:#fff;
+  box-shadow:0 8px 20px -6px rgba(59,130,246,.6)}
+.nav .fab svg{width:28px;height:28px}
+.nav .fab:active{transform:scale(.92)}
+
+/* ---------- SHEET / MODAL ---------- */
+.scrim{position:fixed;inset:0;background:rgba(8,12,24,.5);backdrop-filter:blur(2px);z-index:50;opacity:0;
+  pointer-events:none;transition:opacity .25s}
+.scrim.open{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--surface);
+  border-radius:26px 26px 0 0;max-width:480px;margin:0 auto;padding:8px 18px calc(env(safe-area-inset-bottom) + 22px);
+  transform:translateY(110%);transition:transform .32s cubic-bezier(.2,.9,.3,1);max-height:90vh;overflow-y:auto}
+.sheet.open{transform:none}
+.grab{width:42px;height:5px;border-radius:5px;background:var(--line);margin:6px auto 14px}
+.sheet h3{font-size:21px;font-weight:900;margin:0 0 16px;letter-spacing:-.02em}
+.field{margin-bottom:14px}
+.field label{font-size:12px;font-weight:800;color:var(--ink-2);display:block;margin-bottom:6px}
+.field input,.field select{width:100%;background:var(--surface-2);border:1.5px solid var(--line);border-radius:14px;
+  padding:13px 14px;font-size:16px;font-weight:700;color:var(--ink)}
+.field input:focus,.field select:focus{outline:none;border-color:var(--primary)}
+.seg{display:flex;background:var(--surface-2);border-radius:14px;padding:4px;gap:4px}
+.seg button{flex:1;padding:10px;border-radius:11px;font-size:14px;font-weight:800;color:var(--ink-2)}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:var(--shadow-soft)}
+.emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;max-height:130px;overflow-y:auto}
+.emoji-grid button{font-size:22px;padding:6px;border-radius:10px}
+.emoji-grid button.on{background:var(--surface-2)}
+.btn{width:100%;padding:15px;border-radius:16px;font-size:16px;font-weight:900;background:var(--primary);color:#fff;
+  margin-top:6px;transition:transform .12s}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:var(--surface-2);color:var(--ink)}
+.btn.danger{background:rgba(244,63,94,.12);color:var(--bad-ink)}
+.btn-row{display:flex;gap:10px}
+
+/* ---------- ONBOARDING ---------- */
+.ob{position:fixed;inset:0;z-index:80;background:var(--bg);overflow-y:auto;display:none}
+.ob.show{display:block}
+.ob-inner{max-width:460px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 30px) 22px 30px;min-height:100dvh;
+  display:flex;flex-direction:column}
+.ob-sky{height:140px;border-radius:24px;margin-bottom:22px;position:relative;overflow:hidden;
+  background:linear-gradient(165deg,#ffe08a,#8fd0ff,#5aa9ff);box-shadow:var(--shadow)}
+.ob h1{font-size:30px;font-weight:900;letter-spacing:-.03em;margin:0 0 6px;line-height:1.1}
+.ob p.lead{font-size:15px;font-weight:700;color:var(--ink-2);margin:0 0 22px}
+.ob-step{display:none}.ob-step.on{display:block;animation:fade .3s}
+.tmpl{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+.tmpl-item{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:13px;display:flex;
+  align-items:center;gap:10px;font-size:14px;font-weight:800;transition:.15s}
+.tmpl-item.on{border-color:var(--primary);background:#eef4ff}
+[data-theme="dark"] .tmpl-item.on{background:#16233d}
+.tmpl-item .e{font-size:22px}
+.dots{display:flex;gap:7px;justify-content:center;margin:20px 0}
+.dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--primary);width:22px;border-radius:5px}
+.spacer{flex:1}
+
+/* ---------- TOAST ---------- */
+.toast{position:fixed;bottom:calc(var(--nav-h) + 30px);left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--ink);color:var(--bg);padding:12px 20px;border-radius:30px;font-size:14px;font-weight:800;z-index:90;
+  opacity:0;pointer-events:none;transition:.3s;box-shadow:var(--shadow);white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%)}
+.empty{text-align:center;padding:36px 20px;color:var(--ink-3);font-weight:700}
+.empty .e{font-size:44px;display:block;margin-bottom:8px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- BUDGET ---------- */
+.tot3{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;padding:6px 14px 2px}
+.totc{border-radius:18px;padding:13px 10px;text-align:center;box-shadow:var(--shadow-soft)}
+.totc .l{font-size:11px;font-weight:800;opacity:.85}
+.totc .v{font-size:20px;font-weight:900;letter-spacing:-.02em;margin-top:2px}
+.totc.b{background:#e8effe;color:#1d4ed8}.totc.s{background:#f1eafe;color:#7c3aed}.totc.r{background:#e6f9f1;color:#059669}
+.totc.r.neg{background:#fdeaee;color:#e11d48}
+[data-theme="dark"] .totc.b{background:#16233d;color:#8fbaff}[data-theme="dark"] .totc.s{background:#241a3d;color:#c4a8ff}
+[data-theme="dark"] .totc.r{background:#13352a;color:#6ee7b7}[data-theme="dark"] .totc.r.neg{background:#3a1622;color:#fda4af}
+.bcard{background:var(--surface);border-radius:var(--radius);padding:14px 15px;box-shadow:var(--shadow-soft);margin-bottom:11px}
+.bcard .bh{display:flex;align-items:center;gap:11px}
+.bcard .bic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:20px;flex:0 0 auto}
+.bcard .bn{flex:1;font-size:16px;font-weight:800}
+.bcard .bamt{font-size:14px;font-weight:900}.bcard .bamt small{color:var(--ink-3);font-weight:800}
+.pbar{height:9px;border-radius:6px;background:var(--surface-2);margin:11px 0 8px;overflow:hidden}
+.pbar i{display:block;height:100%;border-radius:6px;transition:width .5s}
+.bfoot{display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:700;color:var(--ink-3)}
+.bfoot .up{display:flex;gap:5px;align-items:center}
+.bfoot .up span{font-size:15px}
+/* ---------- GOALS ---------- */
+.gcard{background:var(--surface);border-radius:var(--radius);padding:15px 16px;box-shadow:var(--shadow-soft);margin-bottom:12px}
+.gtop{display:flex;align-items:center;gap:11px}
+.gemoji{font-size:26px}
+.gname{flex:1;font-size:17px;font-weight:900;letter-spacing:-.01em}
+.gbadge{font-size:10px;font-weight:800;padding:3px 9px;border-radius:9px;color:#fff}
+.gtrash{font-size:17px;opacity:.5;padding:4px}
+.gaway{font-size:12px;font-weight:700;color:var(--ink-3);margin:5px 0 10px}
+.gnums{display:flex;align-items:baseline;gap:6px}
+.gnums .c{font-size:24px;font-weight:900;letter-spacing:-.02em}
+.gnums .t{font-size:13px;font-weight:800;color:var(--ink-3)}
+.gpct{float:right;font-size:14px;font-weight:900;color:var(--primary-ink)}
+.gmeta{font-size:12px;font-weight:700;color:var(--ink-2);margin-top:9px;display:flex;align-items:center;gap:6px}
+.gadd{margin-left:auto;background:var(--surface-2);color:var(--primary-ink);font-weight:900;font-size:12px;padding:6px 12px;border-radius:20px}
+/* ---------- MENU SHEET ROWS ---------- */
+.menu-row{display:flex;align-items:center;gap:13px;padding:15px 6px;font-size:16px;font-weight:800;border-bottom:1px solid var(--line)}
+.menu-row:last-child{border-bottom:none}
+.menu-row .mi{font-size:21px;width:26px;text-align:center}
+.menu-row .chev{margin-left:auto;color:var(--ink-3)}
+/* scrollable onboarding bills */
+.tmpl{max-height:46vh;overflow-y:auto;padding-right:2px}
+.nl-bar{background:var(--surface-2);border:1.5px dashed var(--primary);border-radius:14px;padding:12px 14px;margin-bottom:6px}
+.nl-bar input{width:100%;background:none;border:none;font-size:16px;font-weight:700;color:var(--ink);outline:none}
+.nl-hint{font-size:11px;font-weight:700;color:var(--primary-ink);margin-bottom:14px;padding-left:4px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* ============ SkyCash — money weather ============ */
+(function(){
+'use strict';
+const $ = s => document.querySelector(s);
+const app = $('#app');
+const ROOT = 'skycash_v1';
+const DAY = 86400000;
+
+/* ---------- reference data ---------- */
+const CURRENCIES = [
+  {code:'USD',symbol:'$',pos:'before',locale:'en-US'},
+  {code:'INR',symbol:'₹',pos:'before',locale:'en-IN'},
+  {code:'ZAR',symbol:'R',pos:'before',locale:'en-ZA'},
+  {code:'EUR',symbol:'€',pos:'before',locale:'de-DE'},
+  {code:'GBP',symbol:'£',pos:'before',locale:'en-GB'},
+  {code:'JPY',symbol:'¥',pos:'before',locale:'ja-JP'},
+  {code:'AED',symbol:'AED ',pos:'before',locale:'en-AE'},
+  {code:'AUD',symbol:'A$',pos:'before',locale:'en-AU'}
+];
+const EMOJIS = ['🍔','🛒','⛽','🏠','💡','📱','🚗','💊','🎬','✈️','☕','🎓','🛍️','🍕','🏥','🐶','🎁','💼','💰','📦','🧾','🍺','💳','🏋️','🎵','🌐','✂️','🧴','👕','⚡','🧠','💵','📈','🪙','🧺','🛏️'];
+const TEMPLATES_P = [
+  {title:'Rent',emoji:'🏠',amount:900,kind:'out',freq:'monthly',day:1,cat:'Housing'},
+  {title:'Phone',emoji:'📱',amount:60,kind:'out',freq:'monthly',day:5,cat:'Utilities'},
+  {title:'Internet',emoji:'🌐',amount:50,kind:'out',freq:'monthly',day:8,cat:'Utilities'},
+  {title:'Electricity',emoji:'⚡',amount:80,kind:'out',freq:'monthly',day:6,cat:'Utilities'},
+  {title:'Car Insurance',emoji:'🚗',amount:68,kind:'out',freq:'monthly',day:2,cat:'Transport'},
+  {title:'Car Payment',emoji:'🚗',amount:240,kind:'out',freq:'monthly',day:3,cat:'Transport'},
+  {title:'Groceries',emoji:'🛒',amount:120,kind:'out',freq:'weekly',weekday:4,cat:'Food'},
+  {title:'Eating out',emoji:'🍔',amount:150,kind:'out',freq:'monthly',day:1,cat:'Food'},
+  {title:'Streaming',emoji:'🎬',amount:20,kind:'out',freq:'monthly',day:25,cat:'Fun'},
+  {title:'Gym',emoji:'🏋️',amount:40,kind:'out',freq:'monthly',day:3,cat:'Health'},
+  {title:'Subscriptions',emoji:'💳',amount:30,kind:'out',freq:'monthly',day:20,cat:'Fun'},
+  {title:'Loan',emoji:'🧾',amount:200,kind:'out',freq:'monthly',day:1,cat:'Debt'},
+  {title:'Savings',emoji:'💵',amount:200,kind:'out',freq:'monthly',day:1,cat:'Savings'},
+  {title:'Pet',emoji:'🐶',amount:40,kind:'out',freq:'monthly',day:1,cat:'Pet'}
+];
+const TEMPLATES_B = [
+  {title:'Shop Rent',emoji:'🏠',amount:1200,kind:'out',freq:'monthly',day:1,cat:'Rent'},
+  {title:'Wages',emoji:'💼',amount:2000,kind:'out',freq:'monthly',day:28,cat:'Wages'},
+  {title:'Supplier',emoji:'📦',amount:800,kind:'out',freq:'biweekly',cat:'Supplier'},
+  {title:'Stock / Inventory',emoji:'🧺',amount:600,kind:'out',freq:'monthly',day:5,cat:'Inventory'},
+  {title:'Utilities',emoji:'⚡',amount:160,kind:'out',freq:'monthly',day:10,cat:'Utilities'},
+  {title:'Tax set-aside',emoji:'🧾',amount:300,kind:'out',freq:'monthly',day:15,cat:'Tax'},
+  {title:'Equipment',emoji:'💳',amount:120,kind:'out',freq:'monthly',day:8,cat:'Equipment'},
+  {title:'Marketing',emoji:'📈',amount:100,kind:'out',freq:'monthly',day:1,cat:'Marketing'},
+  {title:'Insurance',emoji:'🚗',amount:90,kind:'out',freq:'monthly',day:2,cat:'Insurance'}
+];
+const GOAL_TYPES = [
+  ['Savings','#3b82f6'],['Emergency','#10b981'],['Purchase','#f59e0b'],
+  ['Travel','#06b6d4'],['Retirement','#7c3aed'],['Debt payoff','#f43f5e']
+];
+
+/* keyword → emoji + category (shared by NL add + budget) */
+const KW = [
+  [/gas|fuel|petrol|diesel/,'⛽','Transport'],
+  [/groc|supermarket/,'🛒','Food'],
+  [/rent|mortgage/,'🏠','Housing'],
+  [/coffee|cafe|starbucks/,'☕','Food'],
+  [/phone|mobile|cell|airtime/,'📱','Utilities'],
+  [/insur/,'🚗','Transport'],
+  [/car|uber|lyft|taxi|bus|train|transit|parking|petrol/,'🚗','Transport'],
+  [/eat|restaurant|lunch|dinner|burger|pizza|takeout|takeaway/,'🍔','Food'],
+  [/shop|clothes|amazon|store/,'🛍️','Shopping'],
+  [/gym|fitness/,'🏋️','Health'],
+  [/pharm|med|doctor|dentist|health|clinic|hospital/,'💊','Health'],
+  [/internet|wifi|broadband/,'🌐','Utilities'],
+  [/electric|power|energy|water|util/,'⚡','Utilities'],
+  [/salary|paycheck|wage|payday|income|payin|deposit/,'💰','Income'],
+  [/gift|present/,'🎁','Fun'],
+  [/movie|netflix|spotify|stream|game|fun|cinema/,'🎬','Fun'],
+  [/beer|bar|drink|wine|alcohol|pub/,'🍺','Fun'],
+  [/tax/,'🧾','Tax'],
+  [/supplier|stock|inventory/,'📦','Supplier'],
+  [/save|saving/,'💵','Savings'],
+  [/loan|debt|repay/,'🧾','Debt']
+];
+function kwMatch(s){ s=(s||'').toLowerCase(); for(const r of KW){ if(r[0].test(s)) return {em:r[1],cat:r[2]}; } return null; }
+function catFromTitle(t){ const m=kwMatch(t); return m?m.cat:null; }
+const CAT_TINT={Housing:'#8b5cf6',Utilities:'#f59e0b',Transport:'#3b82f6',Food:'#f59e0b',Health:'#f43f5e',Fun:'#ec4899',Shopping:'#ec4899',Debt:'#f43f5e',Savings:'#10b981',Income:'#10b981',Rent:'#8b5cf6',Wages:'#3b82f6',Supplier:'#f59e0b',Inventory:'#06b6d4',Tax:'#64748b',Equipment:'#3b82f6',Marketing:'#ec4899',Insurance:'#3b82f6',Pet:'#10b981',Other:'#64748b'};
+function tintFor(c){ if(CAT_TINT[c]) return CAT_TINT[c]; let h=0; for(const ch of c) h=(h*31+ch.charCodeAt(0))%360; return `hsl(${h} 70% 55%)`; }
+function hexA(hex,a){ if(hex.startsWith('hsl')) return hex.replace(')',` / ${a})`).replace('hsl','hsla'); const n=parseInt(hex.slice(1),16); return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`; }
+
+/* ---------- state ---------- */
+let store, view='forecast', wxCache=null, edit=null, editGoal=null, curEmoji='💸';
+
+function defaultStore(){ return {onboarded:false, theme:'auto', activeId:null, profiles:[]}; }
+function load(){ try{ const r=localStorage.getItem(ROOT); store=r?JSON.parse(r):defaultStore(); }catch(e){ store=defaultStore(); } if(!store.profiles) store.profiles=[]; }
+function save(){ try{ localStorage.setItem(ROOT,JSON.stringify(store)); }catch(e){} }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function profile(){ return store.profiles.find(p=>p.id===store.activeId)||store.profiles[0]; }
+
+/* ---------- date helpers ---------- */
+function startOfDay(d){ const x=new Date(d); x.setHours(0,0,0,0); return x; }
+function today(){ return startOfDay(new Date()); }
+function iso(d){ const x=new Date(d); return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); }
+function parseISO(s){ const [y,m,d]=s.split('-').map(Number); return startOfDay(new Date(y,m-1,d)); }
+function addDays(d,n){ return startOfDay(new Date(d.getTime()+n*DAY)); }
+function sameDay(a,b){ return startOfDay(a).getTime()===startOfDay(b).getTime(); }
+function wd(d){ return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date(d).getDay()]; }
+function daysInMonth(y,m){ return new Date(y,m+1,0).getDate(); }
+function nextWeekday(tg){ let d=today(); while(d.getDay()!==tg) d=addDays(d,1); return d; }
+
+/* ---------- currency ---------- */
+function fmt(n,opt){
+  opt=opt||{}; const p=profile(); const c=p?p.currency:CURRENCIES[0];
+  const neg=n<0; let abs=Math.abs(n); let body;
+  if(opt.compact && abs>=10000){ const k=abs/1000; body=(k>=100?Math.round(k):k.toFixed(k<10?2:1).replace(/\.0+$/,''))+'k'; }
+  else { try{ body=new Intl.NumberFormat(c.locale,{maximumFractionDigits:abs%1?2:0}).format(abs); }catch(e){ body=Math.round(abs).toLocaleString(); } }
+  const s=c.pos==='after'?body+' '+c.symbol:c.symbol+body;
+  return (neg?'-':'')+s;
+}
+
+/* ---------- forecast engine ---------- */
+function expand(p,from,to){
+  const out=[];
+  (p.recur||[]).forEach(r=>{
+    if(r.active===false) return;
+    for(let d=new Date(from); d<=to; d=addDays(d,1)){
+      let hit=false; const dd=d.getDate(), dow=d.getDay();
+      if(r.freq==='monthly'){ const dim=daysInMonth(d.getFullYear(),d.getMonth()); hit=dd===Math.min(r.day||1,dim); }
+      else if(r.freq==='weekly'){ hit=dow===(r.weekday??1); }
+      else if(r.freq==='twicemonthly'){ hit=dd===1||dd===15; }
+      else if(r.freq==='biweekly'){ const a=r.anchor?parseISO(r.anchor):from; const diff=Math.round((startOfDay(d)-startOfDay(a))/DAY); hit=diff>=0&&diff%14===0; }
+      if(hit) out.push({date:iso(d),title:r.title,emoji:r.emoji,amount:r.amount,kind:r.kind,cat:r.cat,rec:true});
+    }
+  });
+  (p.txns||[]).forEach(t=>{ const td=parseISO(t.date); if(td>=from&&td<=to) out.push({...t,rec:false}); });
+  return out;
+}
+function nextIncome(p){
+  const evs=expand(p,addDays(today(),1),addDays(today(),45)).filter(e=>e.kind==='in').sort((a,b)=>a.date.localeCompare(b.date));
+  return evs.length?parseISO(evs[0].date):null;
+}
+function forecast(){
+  const p=profile(), t0=today(); const ni=nextIncome(p);
+  let periodEnd = ni?addDays(ni,-1):addDays(t0,30); if(periodEnd<t0) periodEnd=addDays(t0,30);
+  const evs=expand(p,t0,periodEnd);
+  let bal=p.balance||0, lowest=bal, lastOut=null, outCount=0; const series=[];
+  for(let d=new Date(t0); d<=periodEnd; d=addDays(d,1)){
+    const day=evs.filter(e=>e.date===iso(d));
+    day.forEach(e=>{ bal+=e.kind==='in'?e.amount:-e.amount; if(e.kind==='out'){ lastOut=e; outCount++; } });
+    if(bal<lowest) lowest=bal; series.push({date:iso(d),bal,events:day});
+  }
+  return {p,periodEnd,lowest,endBal:bal,series,lastOut,outCount,nextIncomeDate:ni};
+}
+function safeToSpend(f){ return Math.max(0, f.lowest-(f.p.buffer||0)); }
+function periodBounds(p){
+  const incs=expand(p,addDays(today(),-45),addDays(today(),45)).filter(e=>e.kind==='in').map(e=>e.date).sort();
+  const t=iso(today()); let prev=null,next=null;
+  incs.forEach(d=>{ if(d<=t) prev=d; if(d>t&&!next) next=d; });
+  return {start: prev?parseISO(prev):addDays(today(),-30), end: next?addDays(parseISO(next),-1):addDays(today(),30)};
+}
+
+/* ---------- weather ---------- */
+function moneyState(lowest,buffer){ if(lowest<0) return 'storm'; if(lowest<buffer) return 'cloudy'; if(lowest<buffer*2) return 'clear'; return 'shine'; }
+const STATE_LABEL={shine:['Shining','✨'],clear:['Clear Skies','☀️'],cloudy:['Partly Cloudy','⛅'],storm:['Stormy','🌧️']};
+const STATE_CLASS={shine:'sky-shine is-shine',clear:'sky-clear is-clear',cloudy:'sky-cloudy is-cloudy',storm:'sky-storm is-storm'};
+function wxCodeToSky(c){ if(c<=1) return 'sunny'; if(c<=48) return 'cloudy'; return 'rainy'; }
+const JUX={
+  sunny_shine:"Sunshine inside and out — your wallet's glowing ✨",
+  sunny_clear:"Clear skies above and in your account ☀️",
+  sunny_cloudy:"Sunny out — but your balance looks a little cloudy ⛅",
+  sunny_storm:"Blue skies, red wallet 🌧️ — maybe a free day today?",
+  cloudy_shine:"Grey skies outside, but your wallet's shining ✨",
+  cloudy_clear:"Overcast out, steady within — all good ☀️",
+  cloudy_cloudy:"Cloudy all round — steady as she goes ⛅",
+  cloudy_storm:"Cloudy out, stormy in — a cozy, cheap kind of day",
+  rainy_shine:"Rain outside, sunshine in your account ✨ — treat yourself",
+  rainy_clear:"Wet out there, but you're sitting pretty ☀️",
+  rainy_cloudy:"Rainy day, rainy wallet — perfect excuse to stay in ⛅",
+  rainy_storm:"Storm warning, inside and out ⛈️ — hold tight till payday"
+};
+function fetchWeather(){
+  const p=profile(); if(!p||!p.weather||!navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const {latitude:la,longitude:lo}=pos.coords;
+    fetch(`https://api.open-meteo.com/v1/forecast?latitude=${la.toFixed(2)}&longitude=${lo.toFixed(2)}&current_weather=true`)
+      .then(r=>r.json()).then(d=>{ if(d&&d.current_weather){ wxCache={sky:wxCodeToSky(d.current_weather.weathercode),temp:Math.round(d.current_weather.temperature)}; if(view==='forecast') render(); } }).catch(()=>{});
+  },()=>{}, {timeout:8000,maximumAge:3600000});
+}
+
+/* ---------- natural language ---------- */
+function parseNL(str){
+  if(!str||!str.trim()) return null;
+  const s=str.trim(), low=s.toLowerCase();
+  const amtM=low.match(/(\d+(?:\.\d+)?)/); if(!amtM) return null;
+  const amount=Number(amtM[1]);
+  let kind='out';
+  if(/^\+/.test(s)||/\b(got|paid in|income|earned|sold|sale|received|salary|refund|deposit|bonus)\b/.test(low)) kind='in';
+  let date=iso(today());
+  const days={sun:0,mon:1,tue:2,wed:3,thu:4,fri:5,sat:6};
+  if(/\btomorrow\b/.test(low)) date=iso(addDays(today(),1));
+  else if(/\byesterday\b/.test(low)) date=iso(addDays(today(),-1));
+  else if(/\btoday\b/.test(low)) date=iso(today());
+  else { const dm=low.match(/\b(sun|mon|tue|wed|thu|fri|sat)[a-z]*\b/); const inM=low.match(/in (\d+) days?/); const sl=low.match(/\b(\d{1,2})\/(\d{1,2})\b/);
+    if(dm) date=iso(nextWeekday(days[dm[1]]));
+    else if(inM) date=iso(addDays(today(),Number(inM[1])));
+    else if(sl){ const y=today().getFullYear(); date=iso(startOfDay(new Date(y,Number(sl[1])-1,Number(sl[2])))); } }
+  let title=s.replace(/^\+/,'').replace(amtM[0],'')
+    .replace(/\b(today|tomorrow|yesterday)\b/gi,'').replace(/\b(sun|mon|tue|wed|thu|fri|sat)[a-z]*\b/gi,'')
+    .replace(/in \d+ days?/gi,'').replace(/\b\d{1,2}\/\d{1,2}\b/g,'').replace(/\b(got|paid|sold|received|on|for)\b/gi,'')
+    .replace(/\s+/g,' ').trim();
+  title=title?title.charAt(0).toUpperCase()+title.slice(1):(kind==='in'?'Income':'Expense');
+  const m=kwMatch(low);
+  return {amount,kind,date,title,emoji:m?m.em:(kind==='in'?'💰':'💸'),cat:m?m.cat:catFromTitle(title)||''};
+}
+
+/* ============ ICONS ============ */
+function navIcon(n){
+  const i={
+    forecast:'<path d="M12 3v1m0 16v1M4.2 4.2l.7.7m14.2 14.2l.7.7M3 12h1m16 0h1M4.9 19.1l-.7.7M19.8 4.2l-.7.7"/><circle cx="12" cy="12" r="4.5"/>',
+    calendar:'<rect x="3" y="4.5" width="18" height="16" rx="3"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/>',
+    budget:'<path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="7" rx="1"/><rect x="12.5" y="7" width="3" height="11" rx="1"/><rect x="18" y="13" width="3" height="5" rx="1"/>',
+    goals:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/>',
+    menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',
+    plus:'<path d="M12 5v14M5 12h14"/>'
+  };
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2">${i[n]}</svg>`;
+}
+function topbar(){
+  const p=profile();
+  return `<div class="topbar">
+    <button class="icon-btn" data-action="menu" aria-label="Menu">${navIcon('menu')}</button>
+    <div class="balance-pill"><div class="amt tnum">${fmt(p.balance||0)}</div><div class="sub">on hand</div></div>
+    <button class="profile-chip ${p.type==='business'?'biz':''}" data-action="profiles"><span class="pe">${p.emoji}</span>${p.name}</button>
+  </div>`;
+}
+function nav(){
+  const b=(n,l)=>`<button class="${view===n?'on':''}" data-action="tab" data-tab="${n}" aria-label="${l}">${navIcon(n)}</button>`;
+  return `<div class="nav">${b('forecast','Forecast')}${b('calendar','Calendar')}
+    <button class="fab" data-action="add" aria-label="Add">${navIcon('plus')}</button>
+    ${b('budget','Budget')}${b('goals','Goals')}</div>`;
+}
+
+/* ============ SKY HERO ============ */
+function skyHero(f){
+  const st=moneyState(f.lowest,f.p.buffer); const [lbl,em]=STATE_LABEL[st];
+  let line;
+  if(f.lastOut){ const extra=Math.max(0,f.outCount-1); line=`After ${f.lastOut.emoji} ${f.lastOut.title}${extra?` + ${extra} more`:''} on ${wd(f.lastOut.date)}, you'll have <b>${fmt(f.endBal)}</b> left`; }
+  else line=`You'll have <b>${fmt(f.endBal)}</b> by ${wd(f.periodEnd)}`;
+  let real='';
+  if(f.p.weather){ if(wxCache){ real=`<div class="sky-real">🌡️ ${wxCache.temp}° · ${JUX[wxCache.sky+'_'+st]||''}</div>`; }
+    else real=`<div class="sky-real" data-action="weather">📍 Tap to compare with today's real weather</div>`; }
+  const rain=st==='storm'?`<div class="rain">${Array.from({length:22}).map((_,i)=>`<i style="left:${(i*4.6)%100}%;animation-duration:${.5+Math.random()*.5}s;animation-delay:${Math.random()}s"></i>`).join('')}</div>`:'';
+  const sun=(st==='clear'||st==='shine')?'<div class="sun"></div>':'';
+  const sparks=st==='shine'?Array.from({length:6}).map((_,i)=>`<div class="spark" style="top:${15+Math.random()*60}%;left:${10+Math.random()*80}%;animation-delay:${i*.4}s">✨</div>`).join(''):'';
+  return `<div class="sky ${STATE_CLASS[st]}"><div class="sky-bg ${STATE_CLASS[st].split(' ')[0]}"></div>
+    <div class="sky-layer">${sun}<div class="cloud c1"></div><div class="cloud c2"></div>${sparks}${rain}</div>
+    <div class="sky-content"><div class="sky-eyebrow">Forecast · to ${wd(f.periodEnd)}</div>
+      <div class="sky-state">${em} ${lbl}</div><div class="sky-line">${line}</div>${real}</div></div>`;
+}
+function eventRow(e,showDate){
+  const lbl=e.kind==='in'?'Income':(e.rec?'Recurring':'Expense');
+  return `<div class="row ${e.cleared?'cleared':''}"><div class="ic">${e.emoji}</div>
+    <div class="mid"><div class="ttl">${e.title} ${e.rec?'<span class="tag rec">repeat</span>':''}</div>
+      <div class="meta">${showDate?wd(e.date)+' '+e.date.slice(5)+' · ':''}${lbl}</div></div>
+    <div class="amt ${e.kind==='in'?'in':'out'}">${e.kind==='in'?'+':'−'}${fmt(e.amount)}</div></div>`;
+}
+
+/* ============ SCREENS ============ */
+function screenForecast(){
+  const f=forecast(), p=f.p, sts=safeToSpend(f);
+  const lowState=f.lowest<0?'bad':(f.lowest<p.buffer?'warn':'good');
+  const dipDay=f.series.reduce((a,b)=>b.bal<a.bal?b:a, f.series[0]||{date:iso(today()),bal:p.balance||0});
+  const chips=(p.recur||[]).filter(r=>r.kind==='out').slice(0,4).map(r=>`<button class="chip" data-action="quick" data-id="${r.id}"><span class="e">${r.emoji}</span><span class="t">${r.title}</span></button>`).join('')
+    +`<button class="chip add" data-action="add"><span class="e">＋</span><span class="t">Add</span></button>`;
+  const upcoming=f.series.flatMap(s=>s.events).slice(0,6);
+  const eod=p.type==='business'?`<button class="btn ghost" data-action="eod" style="margin-bottom:12px">📒 Log end-of-day sales & purchases</button>`:'';
+  return topbar()+`<div class="screen active">${skyHero(f)}
+    <div class="metrics">
+      <div class="metric"><div class="label">💸 Safe to spend</div><div class="val good tnum">${fmt(sts)}</div><div class="hint">today, keeping your buffer</div></div>
+      <div class="metric"><div class="label">📉 Lowest point</div><div class="val ${lowState} tnum">${fmt(f.lowest)}</div><div class="hint">on ${wd(dipDay.date)} ${dipDay.date.slice(5)}</div></div>
+    </div>
+    <div class="section"><div class="section-head"><h2>Quick add</h2></div><div class="chips">${chips}</div></div>
+    <div class="section">${eod}<div class="section-head"><h2>Coming up</h2><span class="act" data-action="tab" data-tab="calendar">Calendar →</span></div>
+      ${upcoming.length?upcoming.map(e=>eventRow(e,true)).join(''):'<div class="empty"><span class="e">🗓️</span>Nothing scheduled before payday.</div>'}</div></div>`+nav();
+}
+
+function screenCalendar(){
+  const f=forecast(), p=f.p, t0=today();
+  const start=addDays(t0,-((t0.getDay()+6)%7));
+  const evAll=expand(p,start,addDays(start,20));
+  const balByDay={}; let run=p.balance||0;
+  for(let d=new Date(t0);d<=addDays(start,20);d=addDays(d,1)){ evAll.filter(e=>e.date===iso(d)).forEach(e=>run+=e.kind==='in'?e.amount:-e.amount); balByDay[iso(d)]=run; }
+  const head=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(x=>`<span>${x}</span>`).join('');
+  let cells='';
+  for(let i=0;i<21;i++){ const d=addDays(start,i), k=iso(d), past=d<t0; const evs=evAll.filter(e=>e.date===k); const b=balByDay[k];
+    const wxEm=(k in balByDay)?(b<0?'🌧️':(b<p.buffer?'⛅':'☀️')):'';
+    cells+=`<div class="day ${sameDay(d,t0)?'today':''} ${past?'dim':''}">
+      <div class="dn">${d.getDate()===1?(d.toLocaleString('en',{month:'short'})+' 1'):d.getDate()}</div>
+      ${(k in balByDay)?`<div class="bal ${b<0?'neg':''}">${fmt(b,{compact:true})} ${wxEm}</div>`:''}
+      ${evs.slice(0,3).map(e=>`<div class="evt ${e.kind==='in'?'in':'out'}"><span class="em">${e.emoji}</span>${e.title.slice(0,5)}</div>`).join('')}
+      ${evs.length>3?`<div class="evt" style="background:var(--surface-2);color:var(--ink-3)">+${evs.length-3}</div>`:''}</div>`; }
+  return topbar()+`<div class="screen active">${skyHero(f)}
+    <div class="section"><div class="section-head"><h2>Cash-flow calendar</h2></div>
+      <div class="cal-head">${head}</div><div class="cal-grid">${cells}</div>
+      <div class="hint" style="text-align:center;color:var(--ink-3);font-size:12px;font-weight:700;margin-top:12px">Each day shows its projected balance + its own sky.</div></div></div>`+nav();
+}
+
+function screenBudget(){
+  const p=profile(); const {start,end}=periodBounds(p);
+  const evs=expand(p,start,end).filter(e=>e.kind==='out'); const t=iso(today());
+  const cats={};
+  evs.forEach(e=>{ const c=e.cat||catFromTitle(e.title)||'Other'; const o=cats[c]=cats[c]||{planned:0,spent:0,emoji:'',upcoming:[]};
+    o.planned+=e.amount; if(e.date<=t) o.spent+=e.amount; else o.upcoming.push(e); if(!o.emoji) o.emoji=e.emoji; });
+  const budgets=p.budgets||{};
+  let totB=0,totS=0;
+  const entries=Object.entries(cats).sort((a,b)=>b[1].planned-a[1].planned);
+  entries.forEach(([c,v])=>{ totB+=(budgets[c]??v.planned); totS+=v.spent; });
+  const rem=totB-totS;
+  const cards=entries.map(([c,v])=>{
+    const tgt=budgets[c]??v.planned; const pct=tgt>0?v.spent/tgt:0; const over=pct>1;
+    const col=over?'#f43f5e':(pct>=.8?'#f59e0b':tintFor(c));
+    const up=v.upcoming.slice(0,3).map(e=>{ const days=Math.round((parseISO(e.date)-today())/DAY); return `<span title="${e.title}">${e.emoji}</span><small>${days}d</small>`; }).join('');
+    return `<div class="bcard" data-action="budgetedit" data-cat="${c}">
+      <div class="bh"><div class="bic" style="background:${hexA(tintFor(c),.15)}">${v.emoji||'🧾'}</div>
+        <div class="bn">${c}</div><div class="bamt" style="color:${over?'#e11d48':'var(--ink)'}">${fmt(v.spent)}<small> / ${fmt(tgt)}</small></div></div>
+      <div class="pbar"><i style="width:${Math.min(100,pct*100).toFixed(0)}%;background:${col}"></i></div>
+      <div class="bfoot"><span style="color:${over?'#e11d48':'var(--ink-3)'}">${Math.round(pct*100)}% used · ${fmt(v.planned)} planned</span><span class="up">${up}</span></div></div>`;
+  }).join('');
+  return topbar()+`<div class="screen active">
+    <div class="tot3">
+      <div class="totc b"><div class="l">Budget</div><div class="v tnum">${fmt(totB)}</div></div>
+      <div class="totc s"><div class="l">Spent</div><div class="v tnum">${fmt(totS)}</div></div>
+      <div class="totc r ${rem<0?'neg':''}"><div class="l">${rem<0?'Over':'Remaining'}</div><div class="v tnum">${fmt(Math.abs(rem))}</div></div>
+    </div>
+    <div class="section"><div class="section-head"><h2>This pay period</h2><span class="act">${start.getDate()}/${start.getMonth()+1}–${end.getDate()}/${end.getMonth()+1}</span></div>
+      ${cards||'<div class="empty"><span class="e">📊</span>Add some expenses to see your budget.</div>'}
+      <div class="hint" style="text-align:center;color:var(--ink-3);font-size:12px;font-weight:700;margin-top:6px">Tap a category to set its budget. Bars turn red when you overspend.</div></div></div>`+nav();
+}
+
+function screenGoals(){
+  const p=profile(); const goals=p.goals||[];
+  const cards=goals.map(g=>{
+    const col=(GOAL_TYPES.find(t=>t[0]===g.type)||['',  '#3b82f6'])[1];
+    const pct=g.target>0?Math.min(100,(g.current/g.target)*100):0;
+    const left=g.monthly>0?Math.max(0,Math.ceil((g.target-g.current)/g.monthly)):null;
+    const away=left==null?'no monthly set':(left===0?'reached 🎉':left+(left===1?' month away':' months away'));
+    return `<div class="gcard">
+      <div class="gtop"><span class="gemoji">${g.emoji}</span><span class="gname">${g.name}</span>
+        <span class="gbadge" style="background:${col}">${g.type}</span>
+        <span class="gtrash" data-action="delgoal" data-id="${g.id}">🗑️</span></div>
+      <div class="gaway">${away}</div>
+      <div class="gnums" data-action="goaledit" data-id="${g.id}"><span class="c tnum">${fmt(g.current)}</span><span class="t">of ${fmt(g.target)}</span><span class="gpct">${Math.round(pct)}%</span></div>
+      <div class="pbar" style="margin:9px 0 0"><i style="width:${pct}%;background:${col}"></i></div>
+      <div class="gmeta">🔁 ${fmt(g.monthly)} monthly${left!=null?' · '+left+' left':''}<button class="gadd" data-action="addfunds" data-id="${g.id}">＋ Add ${fmt(g.monthly)}</button></div></div>`;
+  }).join('');
+  return topbar()+`<div class="screen active"><div class="section">
+    <div class="section-head"><h2>Goals</h2><span class="act" data-action="goaladd">+ New</span></div>
+    ${cards||'<div class="empty"><span class="e">🎯</span>No goals yet — set one and watch it grow.</div>'}</div></div>`+nav();
+}
+
+function freqLabel(r){ if(r.freq==='monthly') return `Monthly · day ${r.day||1}`; if(r.freq==='weekly') return `Weekly · ${wd(nextWeekday(r.weekday??1))}`; if(r.freq==='biweekly') return 'Every 2 weeks'; if(r.freq==='twicemonthly') return '1st & 15th'; return r.freq; }
+function screenRecurring(){
+  const p=profile(); const inL=p.type==='business'?'Sales':'Income', outL=p.type==='business'?'Purchases':'Expenses';
+  const inc=(p.recur||[]).filter(r=>r.kind==='in'), exp=(p.recur||[]).filter(r=>r.kind==='out');
+  const card=r=>`<div class="rec-card ${r.active===false?'off':''}"><div class="ic" style="background:var(--surface-2)">${r.emoji}</div>
+    <div class="mid" data-action="recedit" data-id="${r.id}"><div class="ttl">${r.title}</div><div class="meta">${freqLabel(r)} · ${r.kind==='in'?'+':'−'}${fmt(r.amount)}</div></div>
+    <div class="switch ${r.active!==false?'on':''}" data-action="rectoggle" data-id="${r.id}"></div></div>`;
+  return topbar()+`<div class="screen active"><div class="section">
+    <div class="section-head"><h2>Recurring</h2><span class="act" data-action="recadd">+ New</span></div>
+    <div class="hint" style="color:var(--ink-2);font-size:13px;font-weight:700;margin:-4px 0 14px">Set it once — your calendar and forecast fill themselves forever.</div>
+    <div class="section-head" style="margin:6px 0 10px"><h2 style="font-size:14px;color:var(--good-ink)">📈 ${inL}</h2></div>
+    ${inc.length?inc.map(card).join(''):'<div class="empty"><span class="e">💰</span>No recurring '+inL.toLowerCase()+' yet.</div>'}
+    <div class="section-head" style="margin:18px 0 10px"><h2 style="font-size:14px;color:var(--bad-ink)">📉 ${outL}</h2></div>
+    ${exp.length?exp.map(card).join(''):'<div class="empty"><span class="e">🧾</span>No recurring '+outL.toLowerCase()+' yet.</div>'}</div></div>`+nav();
+}
+function screenSettings(){
+  const p=profile();
+  const cur=CURRENCIES.map(c=>`<option value="${c.code}" ${p.currency.code===c.code?'selected':''}>${c.symbol} ${c.code}</option>`).join('');
+  const themes=['auto','light','dark'].map(t=>`<button class="${store.theme===t?'on':''}" data-action="settheme" data-v="${t}">${t[0].toUpperCase()+t.slice(1)}</button>`).join('');
+  const fld=(k,lbl,val,hint)=>`<div class="rec-card" style="display:block"><label style="font-size:12px;font-weight:800;color:var(--ink-2)">${lbl}</label>
+    <input class="set-input" data-k="${k}" type="number" inputmode="decimal" value="${val}" style="width:100%;margin-top:6px;background:var(--surface-2);border:1.5px solid var(--line);border-radius:12px;padding:11px;font-size:16px;font-weight:800;color:var(--ink)">${hint?`<div class="hint" style="font-size:11px;color:var(--ink-3);margin-top:5px">${hint}</div>`:''}</div>`;
+  return topbar()+`<div class="screen active"><div class="section">
+    <div class="section-head"><h2>Settings</h2></div>
+    ${fld('balance','Current cash on hand',p.balance||0,'')}
+    ${fld('buffer','Comfort buffer — never dip below this',p.buffer||0,'Cloudy below this · Stormy below '+fmt(0))}
+    <div class="rec-card" style="display:block"><label style="font-size:12px;font-weight:800;color:var(--ink-2)">Currency</label>
+      <select class="set-input" data-k="currency" style="width:100%;margin-top:6px;background:var(--surface-2);border:1.5px solid var(--line);border-radius:12px;padding:11px;font-size:16px;font-weight:800;color:var(--ink)">${cur}</select></div>
+    <div class="rec-card"><div class="mid"><div class="ttl">Real weather mash-up</div><div class="meta">Compare your sky with the real one</div></div>
+      <div class="switch ${p.weather?'on':''}" data-action="wxtoggle"></div></div>
+    <div class="rec-card" style="display:block"><label style="font-size:12px;font-weight:800;color:var(--ink-2)">Appearance</label><div class="seg" style="margin-top:8px">${themes}</div></div>
+    <button class="btn ghost" data-action="seed" style="margin-top:10px">🎬 Reload demo data</button>
+    <div class="hint" style="text-align:center;color:var(--ink-3);font-size:12px;margin-top:18px">SkyCash · all data stays on this device</div></div></div>`+nav();
+}
+
+function render(){
+  if(!store.onboarded||!profile()){ renderOnboarding(); return; }
+  const ob=$('.ob'); if(ob) ob.classList.remove('show');
+  document.documentElement.setAttribute('data-theme', store.theme==='auto'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):store.theme);
+  let h;
+  if(view==='forecast') h=screenForecast();
+  else if(view==='calendar') h=screenCalendar();
+  else if(view==='budget') h=screenBudget();
+  else if(view==='goals') h=screenGoals();
+  else if(view==='recurring') h=screenRecurring();
+  else h=screenSettings();
+  app.innerHTML=h;
+}
+
+/* ============ SHEETS ============ */
+function sheet(html){
+  const s=document.createElement('div');
+  s.innerHTML=`<div class="scrim" data-action="close"></div><div class="sheet"><div class="grab"></div>${html}</div>`;
+  document.body.appendChild(s);
+  requestAnimationFrame(()=>{ s.querySelector('.scrim').classList.add('open'); s.querySelector('.sheet').classList.add('open'); });
+  return s;
+}
+function closeSheet(){
+  document.querySelectorAll('.sheet,.scrim').forEach(el=>el.classList.remove('open'));
+  setTimeout(()=>document.querySelectorAll('.scrim,.sheet').forEach(el=>el.parentElement&&el.parentElement.remove()),300);
+}
+function emojiGrid(sel){ return `<div class="emoji-grid" data-role="emoji">${EMOJIS.map(e=>`<button type="button" class="${e===sel?'on':''}" data-em="${e}">${e}</button>`).join('')}</div>`; }
+function addSheet(pre){
+  const p=profile(); curEmoji=pre?pre.emoji:'💸';
+  const inL=p.type==='business'?'Sale':'Income', outL=p.type==='business'?'Purchase':'Expense';
+  sheet(`<h3>${pre?'Add '+pre.title:'Add transaction'}</h3>
+    ${pre?'':`<div class="nl-bar"><input id="f-nl" placeholder="Type it — e.g. gas 40 friday" autocomplete="off"></div><div class="nl-hint">✨ Type naturally and we'll fill it in</div>`}
+    <div class="seg" data-role="kind"><button data-v="out" class="on">${outL}</button><button data-v="in">${inL}</button></div>
+    <div class="field" style="margin-top:14px"><label>Amount</label><input id="f-amt" type="number" inputmode="decimal" value="${pre?pre.amount:''}" placeholder="0"></div>
+    <div class="field"><label>What for</label><input id="f-title" value="${pre?pre.title:''}" placeholder="e.g. Groceries"></div>
+    <div class="field"><label>Date</label><input id="f-date" type="date" value="${iso(today())}"></div>
+    <div class="field"><label>Icon</label>${emojiGrid(curEmoji)}</div>
+    <button class="btn" data-action="savetxn">Add</button>`);
+}
+function recSheet(r){
+  edit=r||null; const p=profile(); curEmoji=r?r.emoji:'🧾';
+  const inL=p.type==='business'?'Sale':'Income', outL=p.type==='business'?'Purchase':'Expense'; const k=r?r.kind:'out';
+  const freqs=[['monthly','Monthly'],['biweekly','Every 2 wks'],['weekly','Weekly'],['twicemonthly','1st & 15th']];
+  sheet(`<h3>${r?'Edit recurring':'New recurring'}</h3>
+    <div class="seg" data-role="kind"><button data-v="out" class="${k==='out'?'on':''}">${outL}</button><button data-v="in" class="${k==='in'?'on':''}">${inL}</button></div>
+    <div class="field" style="margin-top:14px"><label>Amount</label><input id="r-amt" type="number" inputmode="decimal" value="${r?r.amount:''}" placeholder="0"></div>
+    <div class="field"><label>Name</label><input id="r-title" value="${r?r.title:''}" placeholder="e.g. Rent"></div>
+    <div class="field"><label>Repeats</label><div class="seg" data-role="freq">${freqs.map(f=>`<button data-v="${f[0]}" class="${(r?r.freq:'monthly')===f[0]?'on':''}" style="font-size:12px">${f[1]}</button>`).join('')}</div></div>
+    <div class="field" id="r-daywrap"><label>Day of month</label><input id="r-day" type="number" min="1" max="31" value="${r&&r.day?r.day:1}"></div>
+    <div class="field"><label>Icon</label>${emojiGrid(curEmoji)}</div>
+    <button class="btn" data-action="saverec">${r?'Save':'Add'}</button>${r?'<button class="btn danger" data-action="delrec" style="margin-top:8px">Delete</button>':''}`);
+  syncFreqUI();
+}
+function syncFreqUI(){ const fr=document.querySelector('[data-role="freq"] .on'); if(!fr) return; const wrap=document.getElementById('r-daywrap'); if(wrap) wrap.style.display=(fr.dataset.v==='monthly')?'block':'none'; }
+function eodSheet(){ sheet(`<h3>End of day</h3><p style="color:var(--ink-2);font-weight:700;font-size:14px;margin:-8px 0 16px">Log today's totals — fast.</p>
+  <div class="field"><label>Total sales today</label><input id="e-sale" type="number" inputmode="decimal" placeholder="0"></div>
+  <div class="field"><label>Total purchases today</label><input id="e-buy" type="number" inputmode="decimal" placeholder="0"></div>
+  <button class="btn" data-action="saveeod">Save day</button>`); }
+function goalSheet(g){
+  editGoal=g||null; curEmoji=g?g.emoji:'🎯';
+  const types=GOAL_TYPES.map(t=>`<option value="${t[0]}" ${g&&g.type===t[0]?'selected':''}>${t[0]}</option>`).join('');
+  sheet(`<h3>${g?'Edit goal':'New goal'}</h3>
+    <div class="field"><label>Name</label><input id="g-name" value="${g?g.name:''}" placeholder="e.g. Emergency Fund"></div>
+    <div class="field"><label>Type</label><select id="g-type">${types}</select></div>
+    <div class="field"><label>Target amount</label><input id="g-target" type="number" inputmode="decimal" value="${g?g.target:''}" placeholder="1000"></div>
+    <div class="field"><label>Saved so far</label><input id="g-current" type="number" inputmode="decimal" value="${g?g.current:0}" placeholder="0"></div>
+    <div class="field"><label>Monthly contribution</label><input id="g-monthly" type="number" inputmode="decimal" value="${g?g.monthly:''}" placeholder="100"></div>
+    <div class="field"><label>Icon</label>${emojiGrid(curEmoji)}</div>
+    <button class="btn" data-action="savegoal">${g?'Save':'Create'}</button>
+    ${g?'<button class="btn ghost" data-action="addfunds" data-id="'+g.id+'" style="margin-top:8px">＋ Add a payment</button>':''}`);
+}
+function profileSheet(){
+  const list=store.profiles.map(p=>`<div class="rec-card" data-action="switchprofile" data-id="${p.id}" style="${p.id===store.activeId?'box-shadow:0 0 0 2px var(--primary) inset':''}">
+    <div class="ic" style="background:var(--surface-2)">${p.emoji}</div>
+    <div class="mid"><div class="ttl">${p.name} ${p.type==='business'?'<span class="tag rec">business</span>':''}</div><div class="meta">${fmt(p.balance||0)} on hand</div></div>
+    ${p.id===store.activeId?'<span style="color:var(--primary);font-weight:900">✓</span>':''}</div>`).join('');
+  sheet(`<h3>Profiles</h3>${list}
+    <button class="btn ghost" data-action="newprofile" data-t="personal" style="margin-top:6px">＋ New personal profile</button>
+    <button class="btn ghost" data-action="newprofile" data-t="business" style="margin-top:10px">🏪 New business profile</button>`);
+}
+function newProfileSheet(type){
+  const cur=CURRENCIES.map(c=>`<option value="${c.code}">${c.symbol} ${c.code}</option>`).join(''); curEmoji=type==='business'?'🏪':'👤';
+  sheet(`<h3>New ${type} profile</h3>
+    <div class="field"><label>Name</label><input id="p-name" placeholder="${type==='business'?'My Shop':'Personal'}"></div>
+    <div class="field"><label>Starting cash on hand</label><input id="p-bal" type="number" inputmode="decimal" placeholder="0"></div>
+    <div class="field"><label>Currency</label><select id="p-cur">${cur}</select></div>
+    <div class="field"><label>Icon</label>${emojiGrid(curEmoji)}</div>
+    <button class="btn" data-action="createprofile" data-t="${type}">Create</button>`);
+}
+function budgetSheet(cat){
+  const p=profile(); const cur=(p.budgets||{})[cat];
+  sheet(`<h3>${cat} budget</h3><p style="color:var(--ink-2);font-weight:700;font-size:14px;margin:-8px 0 16px">Set what you want to spend on ${cat} this pay period.</p>
+    <div class="field"><label>Budget amount</label><input id="bg-amt" type="number" inputmode="decimal" value="${cur??''}" placeholder="leave blank to use planned"></div>
+    <button class="btn" data-action="savebudget" data-cat="${cat}">Save</button>
+    ${cur!=null?'<button class="btn ghost" data-action="clearbudget" data-cat="'+cat+'" style="margin-top:8px">Reset to planned</button>':''}`);
+}
+function menuSheet(){
+  const dark=document.documentElement.getAttribute('data-theme')==='dark';
+  sheet(`<h3>Menu</h3>
+    <div class="menu-row" data-action="go" data-tab="recurring"><span class="mi">🔁</span>Recurring<span class="chev">›</span></div>
+    <div class="menu-row" data-action="go" data-tab="budget"><span class="mi">📊</span>Budget<span class="chev">›</span></div>
+    <div class="menu-row" data-action="go" data-tab="goals"><span class="mi">🎯</span>Goals<span class="chev">›</span></div>
+    <div class="menu-row" data-action="go" data-tab="settings"><span class="mi">⚙️</span>Settings<span class="chev">›</span></div>
+    <div class="menu-row" data-action="profiles"><span class="mi">👥</span>Switch / add profile<span class="chev">›</span></div>
+    <div class="menu-row" data-action="theme"><span class="mi">${dark?'☀️':'🌙'}</span>${dark?'Light mode':'Dark mode'}</div>`);
+}
+
+/* ============ ONBOARDING ============ */
+let obStep=0, obData={income:'',incDay:'1',picked:new Set(),bal:'',type:'personal'};
+function renderOnboarding(){
+  document.documentElement.setAttribute('data-theme', store.theme==='auto'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):store.theme);
+  let ob=$('.ob'); if(!ob){ ob=document.createElement('div'); ob.className='ob'; document.body.appendChild(ob); }
+  ob.classList.add('show');
+  const tmpls=(obData.type==='business'?TEMPLATES_B:TEMPLATES_P);
+  const tiles=tmpls.map((t,i)=>`<div class="tmpl-item ${obData.picked.has(i)?'on':''}" data-action="obpick" data-i="${i}"><span class="e">${t.emoji}</span>${t.title}</div>`).join('');
+  ob.innerHTML=`<div class="ob-inner">
+    <div class="ob-sky"><div class="sun" style="top:18px;right:24px"></div><div class="cloud c1" style="animation:none;left:auto;right:30px;top:80px"></div></div>
+    <div class="dots"><i class="${obStep===0?'on':''}"></i><i class="${obStep===1?'on':''}"></i><i class="${obStep===2?'on':''}"></i></div>
+    <div class="ob-step ${obStep===0?'on':''}"><h1>Will I have money<br>before payday?</h1>
+      <p class="lead">SkyCash turns your income and bills into a weather forecast for your wallet. Set it once — it fills itself in forever.</p>
+      <div class="field"><label>This forecast is for…</label><div class="seg" data-role="obtype"><button data-v="personal" class="${obData.type==='personal'?'on':''}">Me 👤</button><button data-v="business" class="${obData.type==='business'?'on':''}">My business 🏪</button></div></div>
+      <div class="spacer"></div><button class="btn" data-action="obnext">Get started</button></div>
+    <div class="ob-step ${obStep===1?'on':''}"><h1>${obData.type==='business'?'What comes in?':'What do you earn?'}</h1>
+      <p class="lead">Your regular ${obData.type==='business'?'sales / pay-ins':'paycheck'}. You can fine-tune later.</p>
+      <div class="field"><label>Cash on hand right now</label><input id="ob-bal" type="number" inputmode="decimal" value="${obData.bal}" placeholder="e.g. 1500"></div>
+      <div class="field"><label>${obData.type==='business'?'Regular pay-in amount':'Take-home per paycheck'}</label><input id="ob-inc" type="number" inputmode="decimal" value="${obData.income}" placeholder="e.g. 2500"></div>
+      <div class="field"><label>Arrives on day of month</label><input id="ob-day" type="number" min="1" max="31" value="${obData.incDay}"></div>
+      <div class="spacer"></div><div class="btn-row"><button class="btn ghost" data-action="obback" style="flex:.5">Back</button><button class="btn" data-action="obnext">Next</button></div></div>
+    <div class="ob-step ${obStep===2?'on':''}"><h1>Pick your regular bills</h1>
+      <p class="lead">Tap the ones that apply. We'll add them and you can set exact amounts anytime.</p>
+      <div class="tmpl">${tiles}</div>
+      <div class="spacer"></div><div class="btn-row"><button class="btn ghost" data-action="obback" style="flex:.5">Back</button><button class="btn" data-action="obfinish">See my forecast ☀️</button></div></div>
+  </div>`;
+}
+function finishOnboarding(){
+  const tmpls=(obData.type==='business'?TEMPLATES_B:TEMPLATES_P); const recur=[];
+  obData.picked.forEach(i=>{ const t=tmpls[i]; recur.push({id:uid(),title:t.title,emoji:t.emoji,amount:t.amount,kind:t.kind,freq:t.freq,day:t.day,weekday:t.weekday,cat:t.cat,active:true}); });
+  if(Number(obData.income)>0) recur.unshift({id:uid(),title:obData.type==='business'?'Pay-in':'Paycheck',emoji:'💰',amount:Number(obData.income),kind:'in',freq:'monthly',day:Number(obData.incDay)||1,cat:'Income',active:true});
+  const c=CURRENCIES[0];
+  const p={id:uid(),name:obData.type==='business'?'My Business':'Personal',emoji:obData.type==='business'?'🏪':'👤',type:obData.type,
+    currency:{...c},buffer:Math.max(100,Math.round((Number(obData.income)||1000)/8/10)*10),balance:Number(obData.bal)||0,
+    weather:true,recur,txns:[],goals:[],budgets:{}};
+  store.profiles.push(p); store.activeId=p.id; store.onboarded=true; save();
+  obStep=0; obData={income:'',incDay:'1',picked:new Set(),bal:'',type:'personal'};
+  view='forecast'; render(); fetchWeather(); toast('Forecast ready ☀️');
+}
+
+/* ============ TOAST ============ */
+let toastT; function toast(m){ let t=$('.toast'); if(!t){t=document.createElement('div');t.className='toast';document.body.appendChild(t);} t.textContent=m; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),1900); }
+
+/* ============ EVENTS ============ */
+document.addEventListener('input',e=>{
+  if(e.target.id==='f-nl'){ const r=parseNL(e.target.value); if(!r) return;
+    const a=$('#f-amt'),t=$('#f-title'),d=$('#f-date'); if(a)a.value=r.amount; if(t)t.value=r.title; if(d)d.value=r.date; curEmoji=r.emoji;
+    document.querySelectorAll('[data-role="kind"] button').forEach(b=>b.classList.toggle('on',b.dataset.v===r.kind));
+    const eg=document.querySelector('[data-role="emoji"]'); if(eg) eg.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.em===r.emoji)); }
+});
+document.addEventListener('change',e=>{
+  const inp=e.target.closest('.set-input'); if(!inp) return; const p=profile(); const k=inp.dataset.k;
+  if(k==='currency'){ const c=CURRENCIES.find(x=>x.code===inp.value); if(c) p.currency={...c}; } else p[k]=Number(inp.value)||0;
+  save(); render();
+});
+document.addEventListener('click',e=>{
+  const emo=e.target.closest('[data-em]'); if(emo){ curEmoji=emo.dataset.em; emo.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('on')); emo.classList.add('on'); return; }
+  const seg=e.target.closest('.seg button'); if(seg){ const role=seg.parentElement.dataset.role; if(role){ seg.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('on')); seg.classList.add('on'); if(role==='freq') syncFreqUI(); if(role==='obtype') obData.type=seg.dataset.v; return; } }
+  const el=e.target.closest('[data-action]'); if(!el) return;
+  const a=el.dataset.action, id=el.dataset.id; const p=profile();
+  switch(a){
+    case 'tab': view=el.dataset.tab; render(); break;
+    case 'go': closeSheet(); view=el.dataset.tab; render(); break;
+    case 'menu': menuSheet(); break;
+    case 'theme': store.theme=(document.documentElement.getAttribute('data-theme')==='dark')?'light':'dark'; save(); closeSheet(); render(); break;
+    case 'add': addSheet(); break;
+    case 'quick': { const r=p.recur.find(x=>x.id===id); addSheet(r); break; }
+    case 'close': closeSheet(); break;
+    case 'weather': if(!p.weather){p.weather=true;save();} fetchWeather(); toast('Checking the sky… 📍'); break;
+    case 'eod': eodSheet(); break;
+    case 'recadd': recSheet(null); break;
+    case 'recedit': recSheet(p.recur.find(x=>x.id===id)); break;
+    case 'rectoggle': { const r=p.recur.find(x=>x.id===id); r.active=!(r.active!==false); save(); render(); break; }
+    case 'delrec': p.recur=p.recur.filter(x=>x.id!==edit.id); save(); closeSheet(); render(); toast('Deleted'); break;
+    case 'profiles': profileSheet(); break;
+    case 'switchprofile': store.activeId=id; save(); closeSheet(); wxCache=null; view='forecast'; render(); fetchWeather(); break;
+    case 'newprofile': newProfileSheet(el.dataset.t); break;
+    case 'seed': seedDemo(); break;
+    case 'settheme': store.theme=el.dataset.v; save(); render(); break;
+    case 'wxtoggle': p.weather=!p.weather; save(); render(); if(p.weather) fetchWeather(); break;
+    case 'goaladd': goalSheet(null); break;
+    case 'goaledit': goalSheet((p.goals||[]).find(g=>g.id===id)); break;
+    case 'delgoal': p.goals=(p.goals||[]).filter(g=>g.id!==id); save(); render(); toast('Goal removed'); break;
+    case 'addfunds': { const g=(p.goals||[]).find(x=>x.id===id); if(g){ g.current=Math.min(g.target,(g.current||0)+(g.monthly||0)); save(); if(document.querySelector('.sheet')) closeSheet(); render(); toast('Nice — payment added 🎉'); } break; }
+    case 'budgetedit': budgetSheet(el.dataset.cat); break;
+    case 'savebudget': { const v=$('#bg-amt').value; p.budgets=p.budgets||{}; if(v==='') delete p.budgets[el.dataset.cat]; else p.budgets[el.dataset.cat]=Number(v)||0; save(); closeSheet(); render(); toast('Budget set'); break; }
+    case 'clearbudget': { p.budgets=p.budgets||{}; delete p.budgets[el.dataset.cat]; save(); closeSheet(); render(); toast('Reset to planned'); break; }
+    /* saves */
+    case 'savetxn': { const amt=Number($('#f-amt').value), title=$('#f-title').value.trim()||'Expense', date=$('#f-date').value||iso(today()); const kind=document.querySelector('[data-role="kind"] .on').dataset.v;
+      if(!amt||amt<=0){ toast('Enter an amount'); break; } p.txns.push({id:uid(),title,emoji:curEmoji,amount:amt,kind,date,cat:catFromTitle(title)||'',cleared:false}); save(); closeSheet(); render(); toast('Added'); break; }
+    case 'saverec': { const amt=Number($('#r-amt').value), title=$('#r-title').value.trim()||'Recurring'; const kind=document.querySelector('[data-role="kind"] .on').dataset.v; const freq=document.querySelector('[data-role="freq"] .on').dataset.v; const day=Number($('#r-day')?.value)||1;
+      if(!amt||amt<=0){ toast('Enter an amount'); break; }
+      if(edit){ Object.assign(edit,{title,emoji:curEmoji,amount:amt,kind,freq,day}); } else p.recur.push({id:uid(),title,emoji:curEmoji,amount:amt,kind,freq,day,weekday:new Date().getDay(),anchor:iso(today()),cat:catFromTitle(title)||'',active:true});
+      save(); closeSheet(); render(); toast('Saved'); break; }
+    case 'saveeod': { const sale=Number($('#e-sale').value), buy=Number($('#e-buy').value), d=iso(today());
+      if(sale>0) p.txns.push({id:uid(),title:'Sales',emoji:'🛒',amount:sale,kind:'in',date:d,cleared:true,cat:'Sales'});
+      if(buy>0) p.txns.push({id:uid(),title:'Purchases',emoji:'📦',amount:buy,kind:'out',date:d,cleared:true,cat:'Supplier'});
+      save(); closeSheet(); render(); toast('Day logged'); break; }
+    case 'savegoal': { const name=$('#g-name').value.trim()||'Goal', type=$('#g-type').value, target=Number($('#g-target').value)||0, current=Number($('#g-current').value)||0, monthly=Number($('#g-monthly').value)||0;
+      if(target<=0){ toast('Set a target amount'); break; } p.goals=p.goals||[];
+      if(editGoal){ Object.assign(editGoal,{name,type,target,current,monthly,emoji:curEmoji}); } else p.goals.push({id:uid(),name,type,target,current,monthly,emoji:curEmoji});
+      save(); closeSheet(); render(); toast('Goal saved'); break; }
+    case 'createprofile': { const name=$('#p-name').value.trim()||(el.dataset.t==='business'?'My Shop':'Personal'); const bal=Number($('#p-bal').value)||0; const code=$('#p-cur').value; const c=CURRENCIES.find(x=>x.code===code)||CURRENCIES[0];
+      const np={id:uid(),name,emoji:curEmoji,type:el.dataset.t,currency:{...c},buffer:Math.max(100,Math.round(bal/10/10)*10),balance:bal,weather:true,recur:[],txns:[],goals:[],budgets:{}};
+      store.profiles.push(np); store.activeId=np.id; save(); closeSheet(); wxCache=null; view='forecast'; render(); toast('Profile created'); break; }
+    /* onboarding */
+    case 'obnext': if(obStep===1){ obData.bal=$('#ob-bal').value; obData.income=$('#ob-inc').value; obData.incDay=$('#ob-day').value; } obStep=Math.min(2,obStep+1); renderOnboarding(); break;
+    case 'obback': obStep=Math.max(0,obStep-1); renderOnboarding(); break;
+    case 'obpick': { const i=Number(el.dataset.i); obData.picked.has(i)?obData.picked.delete(i):obData.picked.add(i); el.classList.toggle('on'); break; }
+    case 'obfinish': finishOnboarding(); break;
+  }
+});
+
+/* ---------- demo ---------- */
+function seedDemo(){
+  const c=CURRENCIES[0];
+  const p={id:uid(),name:'Demo',emoji:'👤',type:'personal',currency:{...c},buffer:300,balance:1473,weather:true,
+    recur:[
+      {id:uid(),title:'Paycheck',emoji:'💰',amount:2400,kind:'in',freq:'twicemonthly',cat:'Income',active:true},
+      {id:uid(),title:'Rent',emoji:'🏠',amount:900,kind:'out',freq:'monthly',day:1,cat:'Housing',active:true},
+      {id:uid(),title:'Groceries',emoji:'🛒',amount:80,kind:'out',freq:'weekly',weekday:4,cat:'Food',active:true},
+      {id:uid(),title:'Gas',emoji:'⛽',amount:80,kind:'out',freq:'weekly',weekday:5,cat:'Transport',active:true},
+      {id:uid(),title:'Car Insurance',emoji:'🚗',amount:68,kind:'out',freq:'monthly',day:15,cat:'Transport',active:true},
+      {id:uid(),title:'Phone',emoji:'📱',amount:82,kind:'out',freq:'monthly',day:10,cat:'Utilities',active:true},
+      {id:uid(),title:'Electricity',emoji:'⚡',amount:90,kind:'out',freq:'monthly',day:6,cat:'Utilities',active:true},
+      {id:uid(),title:'Claude',emoji:'🧠',amount:20,kind:'out',freq:'monthly',day:12,cat:'Fun',active:true}
+    ],txns:[],
+    goals:[
+      {id:uid(),name:'Emergency Fund',type:'Emergency',emoji:'☂️',target:1000,current:250,monthly:143},
+      {id:uid(),name:'Japan Trip',type:'Travel',emoji:'✈️',target:3000,current:600,monthly:200},
+      {id:uid(),name:'M4 MacBook Pro',type:'Purchase',emoji:'💻',target:1600,current:0,monthly:80}
+    ],budgets:{}};
+  store.profiles.push(p); store.activeId=p.id; store.onboarded=true; save(); wxCache=null; view='forecast'; render(); fetchWeather(); toast('Demo loaded ☀️');
+}
+
+/* ---------- boot ---------- */
+load();
+if(!store.onboarded||!store.profiles.length) renderOnboarding(); else { render(); fetchWeather(); }
+matchMedia('(prefers-color-scheme:dark)').addEventListener?.('change',()=>{ if(store.theme==='auto') render(); });
+})();
+
+</script>
+
+<script>
+if('serviceWorker' in navigator){try{
+  const swCode="self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('activate',e=>self.clients.claim());self.addEventListener('fetch',e=>{e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)))});";
+  const blob=new Blob([swCode],{type:'application/javascript'});
+  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+}catch(e){}}
+</script>
+</body>
+</html>

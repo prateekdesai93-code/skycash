@@ -384,6 +384,8 @@ function load(){ try{ const r=localStorage.getItem(ROOT); store=r?JSON.parse(r):
 function save(){ try{ localStorage.setItem(ROOT,JSON.stringify(store)); }catch(e){} }
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
 function profile(){ return store.profiles.find(p=>p.id===store.activeId)||store.profiles[0]; }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function greeting(){ const h=new Date().getHours(); return h<12?'Good morning':h<18?'Good afternoon':'Good evening'; }
 
 /* ---------- date helpers ---------- */
 function startOfDay(d){ const x=new Date(d); x.setHours(0,0,0,0); return x; }
@@ -417,7 +419,7 @@ function expand(p,from,to){
       else if(r.freq==='weekly'){ hit=dow===(r.weekday??1); }
       else if(r.freq==='twicemonthly'){ hit=dd===1||dd===15; }
       else if(r.freq==='biweekly'){ const a=r.anchor?parseISO(r.anchor):from; const diff=Math.round((startOfDay(d)-startOfDay(a))/DAY); hit=diff>=0&&diff%14===0; }
-      if(hit) out.push({date:iso(d),title:r.title,emoji:r.emoji,amount:r.amount,kind:r.kind,cat:r.cat,rec:true});
+      if(hit && !(r.skips&&r.skips.includes(iso(d)))) out.push({date:iso(d),title:r.title,emoji:r.emoji,amount:r.amount,kind:r.kind,cat:r.cat,rec:true,recId:r.id});
     }
   });
   (p.txns||[]).forEach(t=>{ const td=parseISO(t.date); if(td>=from&&td<=to) out.push({...t,rec:false}); });
@@ -542,7 +544,7 @@ function skyHero(f){
   const sparks=st==='shine'?Array.from({length:6}).map((_,i)=>`<div class="spark" style="top:${15+Math.random()*60}%;left:${10+Math.random()*80}%;animation-delay:${i*.4}s">✨</div>`).join(''):'';
   return `<div class="sky ${STATE_CLASS[st]}"><div class="sky-bg ${STATE_CLASS[st].split(' ')[0]}"></div>
     <div class="sky-layer">${sun}<div class="cloud c1"></div><div class="cloud c2"></div>${sparks}${rain}</div>
-    <div class="sky-content"><div class="sky-eyebrow">Forecast · to ${wd(f.periodEnd)}</div>
+    <div class="sky-content"><div class="sky-eyebrow">${store.userName?greeting()+', '+esc(store.userName)+' · ':''}Forecast · to ${wd(f.periodEnd)}</div>
       <div class="sky-state">${em} ${lbl}</div><div class="sky-line">${line}</div>${real}</div></div>`;
 }
 function eventRow(e,showDate){
@@ -582,7 +584,7 @@ function screenCalendar(){
   let cells='';
   for(let i=0;i<21;i++){ const d=addDays(start,i), k=iso(d), past=d<t0; const evs=evAll.filter(e=>e.date===k); const b=balByDay[k];
     const wxEm=(k in balByDay)?(b<0?'🌧️':(b<p.buffer?'⛅':'☀️')):'';
-    cells+=`<div class="day ${sameDay(d,t0)?'today':''} ${past?'dim':''}">
+    cells+=`<div class="day ${sameDay(d,t0)?'today':''} ${past?'dim':''}" data-action="day" data-date="${k}">
       <div class="dn">${d.getDate()===1?(d.toLocaleString('en',{month:'short'})+' 1'):d.getDate()}</div>
       ${(k in balByDay)?`<div class="bal ${b<0?'neg':''}">${fmt(b,{compact:true})} ${wxEm}</div>`:''}
       ${evs.slice(0,3).map(e=>`<div class="evt ${e.kind==='in'?'in':'out'}"><span class="em">${e.emoji}</span>${e.title.slice(0,5)}</div>`).join('')}
@@ -676,7 +678,19 @@ function screenSettings(){
     <div class="rec-card"><div class="mid"><div class="ttl">Real weather mash-up</div><div class="meta">Compare your sky with the real one</div></div>
       <div class="switch ${p.weather?'on':''}" data-action="wxtoggle"></div></div>
     <div class="rec-card" style="display:block"><label style="font-size:12px;font-weight:800;color:var(--ink-2)">Appearance</label><div class="seg" style="margin-top:8px">${themes}</div></div>
-    <button class="btn ghost" data-action="seed" style="margin-top:10px">🎬 Reload demo data</button>
+    <div class="rec-card" style="display:block"><label style="font-size:12px;font-weight:800;color:var(--ink-2)">Your name (for your welcome)</label>
+      <input id="set-name" value="${esc(store.userName||'')}" placeholder="e.g. Pratik" style="width:100%;margin-top:6px;background:var(--surface-2);border:1.5px solid var(--line);border-radius:12px;padding:11px;font-size:16px;font-weight:800;color:var(--ink)"></div>
+
+    <div class="section-head" style="margin:18px 0 10px"><h2 style="font-size:14px">📤 Data</h2></div>
+    <button class="btn ghost" data-action="exportcsv">⬇️ Export transactions (CSV)</button>
+    <button class="btn ghost" data-action="backup" style="margin-top:8px">💾 Save backup (JSON)</button>
+    <label class="btn ghost" style="margin-top:8px;display:block;text-align:center">♻️ Restore from backup<input id="restore-file" type="file" accept=".json,application/json" style="display:none"></label>
+
+    <div class="section-head" style="margin:18px 0 10px"><h2 style="font-size:14px;color:var(--bad-ink)">🧹 Reset</h2></div>
+    <button class="btn ghost" data-action="ask" data-kind="month">Clear this month's entries</button>
+    <button class="btn ghost" data-action="ask" data-kind="all" style="margin-top:8px">Clear all added entries</button>
+    <button class="btn danger" data-action="ask" data-kind="wipe" style="margin-top:8px">Delete everything &amp; start over</button>
+    <button class="btn ghost" data-action="seed" style="margin-top:14px">🎬 Reload demo data</button>
     <div class="hint" style="text-align:center;color:var(--ink-3);font-size:12px;margin-top:18px">SkyCash · all data stays on this device</div></div></div>`+nav();
 }
 
@@ -706,8 +720,49 @@ function closeSheet(){
   document.querySelectorAll('.sheet,.scrim').forEach(el=>el.classList.remove('open'));
   setTimeout(()=>document.querySelectorAll('.scrim,.sheet').forEach(el=>el.parentElement&&el.parentElement.remove()),300);
 }
+function closeSheetNow(){ document.querySelectorAll('.scrim,.sheet').forEach(el=>el.parentElement&&el.parentElement.remove()); }
+function daySheet(dateISO){
+  const p=profile(); const d=parseISO(dateISO); const evs=expand(p,d,d);
+  let net=0; evs.forEach(e=>net+=e.kind==='in'?e.amount:-e.amount);
+  const rows=evs.map(e=>{
+    const rm = e.rec
+      ? `<button class="gtrash" data-action="skiprec" data-id="${e.recId}" data-date="${dateISO}" title="Skip this day">✕</button>`
+      : `<button class="gtrash" data-action="deltxn" data-id="${e.id}" data-date="${dateISO}" title="Remove">🗑️</button>`;
+    return `<div class="row" style="margin-bottom:8px"><div class="ic">${e.emoji}</div>
+      <div class="mid"><div class="ttl">${esc(e.title)} ${e.rec?'<span class="tag rec">repeat</span>':''}</div><div class="meta">${e.kind==='in'?'Income':'Expense'}${e.cat?' · '+esc(e.cat):''}</div></div>
+      <div class="amt ${e.kind==='in'?'in':'out'}">${e.kind==='in'?'+':'−'}${fmt(e.amount)}</div>${rm}</div>`;
+  }).join('');
+  sheet(`<h3>${wd(d)}, ${d.toLocaleString('en',{month:'short'})} ${d.getDate()}</h3>
+    <div style="display:flex;justify-content:space-between;align-items:center;background:var(--surface-2);border-radius:14px;padding:11px 14px;margin-bottom:14px;font-weight:800">
+      <span style="color:var(--ink-2);font-size:13px">Net for the day</span><span class="tnum" style="font-size:18px;color:${net<0?'var(--bad-ink)':'var(--good-ink)'}">${net>=0?'+':''}${fmt(net)}</span></div>
+    ${rows||'<div class="empty" style="padding:20px 0"><span class="e">🗓️</span>Nothing on this day yet.</div>'}
+    <button class="btn" data-action="addday" data-date="${dateISO}" style="margin-top:6px">＋ Add to this day</button>`);
+}
+function confirmSheet(kind){
+  const mo=new Date().toLocaleString('en',{month:'long'});
+  const map={
+    month:['Clear this month',`Removes the one-off transactions you added in ${mo}. Recurring items, goals and budgets stay.`,'Clear month',false],
+    all:['Clear all added entries','Removes every one-off transaction you have added. Recurring items, goals and budgets stay.','Clear all',false],
+    wipe:['Delete everything','Erases all profiles, recurring items, goals and settings on this device. This cannot be undone.','Delete everything',true]
+  };
+  const m=map[kind];
+  sheet(`<h3>${m[0]}</h3><p style="color:var(--ink-2);font-weight:700;font-size:14px;margin:-8px 0 18px">${m[1]}</p>
+    <button class="btn ${m[3]?'danger':''}" data-action="do_reset" data-kind="${kind}">${m[2]}</button>
+    <button class="btn ghost" data-action="close" style="margin-top:8px">Cancel</button>`);
+}
+function csvCell(v){ v=String(v==null?'':v); return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; }
+function download(name,content,type){ const b=new Blob([content],{type}); const u=URL.createObjectURL(b); const a=document.createElement('a'); a.href=u; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),1500); }
+function exportCSV(){
+  const p=profile(); const rows=[['Date','Type','Title','Category','Amount','Recurring','Frequency']];
+  (p.txns||[]).slice().sort((a,b)=>a.date.localeCompare(b.date)).forEach(t=>rows.push([t.date,t.kind==='in'?'Income':'Expense',t.title,t.cat||'',(t.kind==='in'?'':'-')+t.amount,'No','']));
+  (p.recur||[]).forEach(r=>rows.push(['',r.kind==='in'?'Income':'Expense',r.title,r.cat||'',(r.kind==='in'?'':'-')+r.amount,'Yes',freqLabel(r)+(r.active===false?' (paused)':'')]));
+  download(`skycash-${(p.name||'data').replace(/\s+/g,'-').toLowerCase()}-${iso(today())}.csv`, rows.map(r=>r.map(csvCell).join(',')).join('\n'), 'text/csv');
+  toast('CSV exported ⬇️');
+}
+function backup(){ download(`skycash-backup-${iso(today())}.json`, JSON.stringify(store,null,2), 'application/json'); toast('Backup saved 💾'); }
+function restore(file){ const r=new FileReader(); r.onload=()=>{ try{ const d=JSON.parse(r.result); if(!d||!Array.isArray(d.profiles)) throw 0; store=d; if(!store.profiles.length) store.onboarded=false; save(); wxCache=null; view='forecast'; render(); toast('Backup restored ✓'); }catch(e){ toast("Couldn't read that file"); } }; r.readAsText(file); }
 function emojiGrid(sel){ return `<div class="emoji-grid" data-role="emoji">${EMOJIS.map(e=>`<button type="button" class="${e===sel?'on':''}" data-em="${e}">${e}</button>`).join('')}</div>`; }
-function addSheet(pre){
+function addSheet(pre,preDate){
   const p=profile(); curEmoji=pre?pre.emoji:'💸';
   const inL=p.type==='business'?'Sale':'Income', outL=p.type==='business'?'Purchase':'Expense';
   sheet(`<h3>${pre?'Add '+pre.title:'Add transaction'}</h3>
@@ -715,7 +770,7 @@ function addSheet(pre){
     <div class="seg" data-role="kind"><button data-v="out" class="on">${outL}</button><button data-v="in">${inL}</button></div>
     <div class="field" style="margin-top:14px"><label>Amount</label><input id="f-amt" type="number" inputmode="decimal" value="${pre?pre.amount:''}" placeholder="0"></div>
     <div class="field"><label>What for</label><input id="f-title" value="${pre?pre.title:''}" placeholder="e.g. Groceries"></div>
-    <div class="field"><label>Date</label><input id="f-date" type="date" value="${iso(today())}"></div>
+    <div class="field"><label>Date</label><input id="f-date" type="date" value="${preDate||iso(today())}"></div>
     <div class="field"><label>Icon</label>${emojiGrid(curEmoji)}</div>
     <button class="btn" data-action="savetxn">Add</button>`);
 }
@@ -788,7 +843,7 @@ function menuSheet(){
 }
 
 /* ============ ONBOARDING ============ */
-let obStep=0, obData={income:'',incDay:'1',picked:new Set(),bal:'',type:'personal'};
+let obStep=0, obData={income:'',incDay:'1',picked:new Set(),bal:'',type:'personal',name:''};
 function renderOnboarding(){
   document.documentElement.setAttribute('data-theme', store.theme==='auto'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):store.theme);
   let ob=$('.ob'); if(!ob){ ob=document.createElement('div'); ob.className='ob'; document.body.appendChild(ob); }
@@ -800,6 +855,7 @@ function renderOnboarding(){
     <div class="dots"><i class="${obStep===0?'on':''}"></i><i class="${obStep===1?'on':''}"></i><i class="${obStep===2?'on':''}"></i></div>
     <div class="ob-step ${obStep===0?'on':''}"><h1>Will I have money<br>before payday?</h1>
       <p class="lead">SkyCash turns your income and bills into a weather forecast for your wallet. Set it once — it fills itself in forever.</p>
+      <div class="field"><label>What should we call you?</label><input id="ob-name" value="${esc(obData.name||'')}" placeholder="Your name"></div>
       <div class="field"><label>This forecast is for…</label><div class="seg" data-role="obtype"><button data-v="personal" class="${obData.type==='personal'?'on':''}">Me 👤</button><button data-v="business" class="${obData.type==='business'?'on':''}">My business 🏪</button></div></div>
       <div class="spacer"></div><button class="btn" data-action="obnext">Get started</button></div>
     <div class="ob-step ${obStep===1?'on':''}"><h1>${obData.type==='business'?'What comes in?':'What do you earn?'}</h1>
@@ -822,8 +878,8 @@ function finishOnboarding(){
   const p={id:uid(),name:obData.type==='business'?'My Business':'Personal',emoji:obData.type==='business'?'🏪':'👤',type:obData.type,
     currency:{...c},buffer:Math.max(100,Math.round((Number(obData.income)||1000)/8/10)*10),balance:Number(obData.bal)||0,
     weather:true,recur,txns:[],goals:[],budgets:{}};
-  store.profiles.push(p); store.activeId=p.id; store.onboarded=true; save();
-  obStep=0; obData={income:'',incDay:'1',picked:new Set(),bal:'',type:'personal'};
+  store.profiles.push(p); store.activeId=p.id; store.onboarded=true; if(obData.name) store.userName=obData.name; save();
+  obStep=0; obData={income:'',incDay:'1',picked:new Set(),bal:'',type:'personal',name:''};
   view='forecast'; render(); fetchWeather(); toast('Forecast ready ☀️');
 }
 
@@ -838,6 +894,8 @@ document.addEventListener('input',e=>{
     const eg=document.querySelector('[data-role="emoji"]'); if(eg) eg.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.em===r.emoji)); }
 });
 document.addEventListener('change',e=>{
+  if(e.target.id==='set-name'){ store.userName=e.target.value.trim(); save(); return; }
+  if(e.target.id==='restore-file'){ if(e.target.files&&e.target.files[0]) restore(e.target.files[0]); return; }
   const inp=e.target.closest('.set-input'); if(!inp) return; const p=profile(); const k=inp.dataset.k;
   if(k==='currency'){ const c=CURRENCIES.find(x=>x.code===inp.value); if(c) p.currency={...c}; } else p[k]=Number(inp.value)||0;
   save(); render();
@@ -849,6 +907,19 @@ document.addEventListener('click',e=>{
   const a=el.dataset.action, id=el.dataset.id; const p=profile();
   switch(a){
     case 'tab': view=el.dataset.tab; render(); break;
+    case 'day': daySheet(el.dataset.date); break;
+    case 'addday': closeSheetNow(); addSheet(null, el.dataset.date); break;
+    case 'deltxn': p.txns=(p.txns||[]).filter(x=>x.id!==id); save(); closeSheetNow(); render(); daySheet(el.dataset.date); break;
+    case 'skiprec': { const r=p.recur.find(x=>x.id===id); if(r){ r.skips=r.skips||[]; if(!r.skips.includes(el.dataset.date)) r.skips.push(el.dataset.date); } save(); closeSheetNow(); render(); daySheet(el.dataset.date); break; }
+    case 'ask': confirmSheet(el.dataset.kind); break;
+    case 'do_reset': {
+      const k=el.dataset.kind;
+      if(k==='month'){ const t0=today(); const ym=t0.getFullYear()+'-'+String(t0.getMonth()+1).padStart(2,'0'); p.txns=(p.txns||[]).filter(t=>!t.date.startsWith(ym)); save(); closeSheet(); render(); toast('Month cleared'); }
+      else if(k==='all'){ p.txns=[]; save(); closeSheet(); render(); toast('Entries cleared'); }
+      else if(k==='wipe'){ try{localStorage.removeItem(ROOT);}catch(e){} store=defaultStore(); save(); closeSheetNow(); obStep=0; obData={income:'',incDay:'1',picked:new Set(),bal:'',type:'personal',name:''}; renderOnboarding(); }
+      break; }
+    case 'exportcsv': exportCSV(); break;
+    case 'backup': backup(); break;
     case 'go': closeSheet(); view=el.dataset.tab; render(); break;
     case 'menu': menuSheet(); break;
     case 'theme': store.theme=(document.documentElement.getAttribute('data-theme')==='dark')?'light':'dark'; save(); closeSheet(); render(); break;
@@ -893,7 +964,7 @@ document.addEventListener('click',e=>{
       const np={id:uid(),name,emoji:curEmoji,type:el.dataset.t,currency:{...c},buffer:Math.max(100,Math.round(bal/10/10)*10),balance:bal,weather:true,recur:[],txns:[],goals:[],budgets:{}};
       store.profiles.push(np); store.activeId=np.id; save(); closeSheet(); wxCache=null; view='forecast'; render(); toast('Profile created'); break; }
     /* onboarding */
-    case 'obnext': if(obStep===1){ obData.bal=$('#ob-bal').value; obData.income=$('#ob-inc').value; obData.incDay=$('#ob-day').value; } obStep=Math.min(2,obStep+1); renderOnboarding(); break;
+    case 'obnext': if(obStep===0){ obData.name=$('#ob-name')?.value||''; } if(obStep===1){ obData.bal=$('#ob-bal').value; obData.income=$('#ob-inc').value; obData.incDay=$('#ob-day').value; } obStep=Math.min(2,obStep+1); renderOnboarding(); break;
     case 'obback': obStep=Math.max(0,obStep-1); renderOnboarding(); break;
     case 'obpick': { const i=Number(el.dataset.i); obData.picked.has(i)?obData.picked.delete(i):obData.picked.add(i); el.classList.toggle('on'); break; }
     case 'obfinish': finishOnboarding(); break;
